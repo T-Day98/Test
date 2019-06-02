@@ -7,4 +7,14 @@ git config --global user.email "tadej.cverlin@gmail.com"
 git init (v mapi kjer bom mel reprizitorij )
 
 git remote add origin https://github.com/T-Day98/NasProjekt.git
+https://github.com/T-Day98/Test.git
+
+git add git.txt (za en fajl)
+
+subl ime_fajla
+git add . (za doddajanje vec fajlov)
+
+git commit -m '-nek text' (za commitanje na git)
+
+git push origin master
 
