@@ -1,0 +1,104 @@
+var express = require('express');
+var fs      = require('fs');
+var request = require('request');
+var cheerio = require('cheerio');
+var app     = express();
+var sql = require('mssql');
+
+var config={
+	"user":'admin',
+	"password":'password',
+	"server":'LAPTOP-3UMDSHE4\SQL2019',
+	"database":'skreper',
+	"port":1433,
+	"dialect":'mssql',
+	"dialectOptions":{
+		"instanceName":"SQL2019"
+	}
+};
+
+function insertRow() {
+    //2.
+    var dbConn =new sql.ConnectionPool(config);
+    //3.
+    dbConn.connect().then(function () {
+        //4.
+        var transaction = new sql.Transaction(dbConn);
+        //5.
+        transaction.begin().then(function () {
+            //6.
+            var request = new sql.Request(transaction);
+            //7.
+            request.query("Insert into EmployeeInfo (EmpName,Salary,DeptName,Designation) values ('T.M. Sabnis',13000,'Accounts','Lead')")
+        .then(function () {
+                //8.
+                transaction.commit().then(function (recordSet) {
+                    console.log(recordSet);
+                    dbConn.close();
+                }).catch(function (err) {
+                    //9.
+                    console.log("Error in Transaction Commit " + err);
+                    dbConn.close();
+                });
+            }).catch(function (err) {
+                //10.
+                console.log("Error in Transaction Begin " + err);
+                dbConn.close();
+            });
+             
+        }).catch(function (err) {
+            //11.
+            console.log(err);
+            dbConn.close();
+        });
+    }).catch(function (err) {
+        //12.
+        console.log(err);
+    });
+}
+//13.
+insertRow();
+
+app.get('/scrape', function(req, res){
+
+  url = 'https://www.24ur.com/novice';
+
+  request(url, function(error, response, html){
+    if(!error){
+      var $ = cheerio.load(html);
+
+      var title, release, rating;
+      var json = { title : "", rating : ""};
+
+      $('.card__title-inside').filter(function(){
+        var data = $(this);
+        title = data.text().trim();
+        //release = data.children().last().children().last().text().trim();
+
+        json.title = title;
+        //json.release = release;
+      })
+
+      $('.card__summary').filter(function(){
+        var data = $(this);
+        rating = data.text().trim();
+
+        json.rating = rating;
+      })
+    }
+
+    fs.writeFile('output.json', JSON.stringify(json, null, 4), function(err){
+      console.log('File successfully written!');
+    })
+
+    res.send('Check your console!')
+  })
+})
+
+app.listen('8081')
+console.log('Magic happens on port 8081');
+exports = module.exports = app;
+
+
+
+
