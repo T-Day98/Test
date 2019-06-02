@@ -1,0 +1,10 @@
+sudo apt-get install git
+
+#login
+git config --global user.name "T-Day98"
+git config --global user.email "tadej.cverlin@gmail.com"
+
+git init (v mapi kjer bom mel reprizitorij )
+
+git remote add origin https://github.com/T-Day98/NasProjekt.git
+
