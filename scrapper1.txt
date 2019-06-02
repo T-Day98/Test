@@ -1,0 +1,106 @@
+let bookingUrl='https://www.24ur.com/novice';
+//let bookingUrl='https://www.booking.com/searchresults.sl.html?aid=397594&label=gog235jc-1DCAEoggI46AdII1gDaMsBiAEBmAEjuAEXyAEP2AED6AEB-AECiAIBqAIDuALH_cDnBcACAQ&sid=58dd9838f6a993a7eb369abf37a80b94&sb=1&src=index&src_elem=sb&error_url=https%3A%2F%2Fwww.booking.com%2Findex.sl.html%3Faid%3D397594%3Blabel%3Dgog235jc-1DCAEoggI46AdII1gDaMsBiAEBmAEjuAEXyAEP2AED6AEB-AECiAIBqAIDuALH_cDnBcACAQ%3Bsid%3D58dd9838f6a993a7eb369abf37a80b94%3Bsb_price_type%3Dtotal%26%3B&ss=Singapur&is_ski_area=0&ssne=Singapur&ssne_untouched=Singapur&dest_id=-73635&dest_type=city&checkin_year=2019&checkin_month=6&checkin_monthday=30&checkout_year=2019&checkout_month=7&checkout_monthday=30&group_adults=2&group_children=0&no_rooms=1&b_h4u_keep_filters=&from_sf=1';
+(async () => {
+    const browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1920, height: 926 });
+    await page.goto(bookingUrl);
+
+    // get hotel details
+    let hotelData = await page.evaluate(() => {
+        let hotels = [];
+        // get the hotel elements
+        //let hotelsElms = document.querySelectorAll('div.sr_property_block[data-hotelid]');
+		let hotelsElms = document.querySelectorAll('div.news-list');
+        // get the hotel data
+        hotelsElms.forEach((hotelelement) => {
+            let hotelJson = {};
+            try {
+                hotelJson.naslov = hotelelement.querySelector('span.card__title-inside').innerText;
+				//a=hotelelement.querySelector('span.card__title-inside').innerText;
+                hotelJson.vsebina = hotelelement.querySelector('p.card__summary').innerText;
+               // hotelJson.rating = hotelelement.querySelector('span.review-score-badge').innerText;
+                //if(hotelelement.querySelector('strong.price')){
+               //     hotelJson.price = hotelelement.querySelector('strong.price').innerText;
+               // }
+				
+            }
+            catch (exception){
+
+            }
+            hotels.push(hotelJson);
+			
+			
+        });
+        return hotels;
+		
+    });
+    console.dir(hotelData);
+	fs.writeFile('output.json', JSON.stringify(hotelData, null, 4), function(err){
+      console.log('File successfully written!');
+    })
+	
+	
+	/*sql.connect(config,function (err){
+		if(err)
+		{
+            console.log(err);
+
+            var request=new sql.Request();
+
+            //request.query("insert into novice(Id,Naslov,Besedilo,Avtor) Values ('uno', 'duo', 'tres')",function (err,recordset)){
+				if(err)
+				{
+					console.log(err);
+				}
+				
+			
+			}		
+		}
+	}*/
+	/*for(var i=0;i<3;i++)
+	{
+		console.log(i+"podatek:"+hotelData[i]);
+	}*/
+	
+	
+})();
+
+/*(async () => {
+    const browser = await puppeteer.launch({ headless: true });
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1920, height: 926 });
+    await page.goto(bookingUrl);
+
+    // get hotel details
+    let hotelData1 = await page.evaluate(() => {
+        let hotels = [];
+        // get the hotel elements
+        //let hotelsElms = document.querySelectorAll('div.sr_property_block[data-hotelid]');
+		let hotelsElms = document.querySelectorAll('div.news-list');
+        // get the hotel data
+        hotelsElms.forEach((hotelelement) => {
+            let hotelJson = {};
+            try {
+                hotelJson = hotelelement.querySelector('p.card__summary').innerText;
+				
+            }
+            catch (exception){
+
+            }
+            hotels.push(hotelJson);
+			
+			
+        });
+        return hotels;
+		
+    });
+    console.dir(hotelData1);
+	
+	for(var i=0;i<3;i++)
+	{
+		console.log(i+"podatek:"+hotelData1[i]);
+	}
+	
+	
+})();*/
