@@ -18,3 +18,9 @@ git commit -m '-nek text' (za commitanje na git)
 
 git push origin master
 
+*******************
+
+reprizitoriji : git remote -v
+
+zamenjaj reprizitorij: git remote set-url origin 
+
